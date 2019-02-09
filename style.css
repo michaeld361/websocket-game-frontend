@@ -1,0 +1,192 @@
+@import url('https://fonts.googleapis.com/css?family=Montserrat:700,900');
+
+html, body
+{
+	margin:0px;
+	padding: 0px;
+}
+
+#introContainer
+{
+	width:100%;
+	height: 100%;
+	position: absolute;
+	background-color: #ff5345;
+	font-family: 'Montserrat', sans-serif;
+	font-weight:700;
+	color:white;
+	font-size:40px;
+	text-align:center;
+	z-index:1;
+	transition:all 0.5s ease;
+}
+
+
+#introPlay
+{
+	top:50%;
+	transform:translateY(-50%);
+	position: absolute;
+	left:0px;
+	right:0px;
+	margin-left:auto;
+	margin-right:auto;
+	cursor: pointer;
+	transition:all 0.2s ease;	
+}
+
+#introPlay:hover
+{
+	opacity:0.5;
+}
+
+
+#header
+{
+	width:100%;
+	height: 100px;
+	background-color: #ff5345;
+	position: absolute;
+	top:0px;
+	left: 0px;
+	z-index:9;
+}
+
+#computerIcon {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    background-image: url(images/computerIcon.png);
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    top: 30px;
+    left: 30px;
+    border-radius: 90px;
+}
+
+.userIcon {
+    width: 40px;
+    height: 40px;
+    position: relative;
+    background-image: url(images/userIcon.png);
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: white;
+    top: 30px;
+    border-radius: 90px;
+    margin-right: 10px;
+    float: right;
+}
+
+
+#gameContainer {
+    width: 100%;
+    height: calc(100% - 100px);
+    position: absolute;
+    top: 100px;
+    background-color: #dfe6e9;
+}
+
+#answerContainer {
+    width: 100%;
+    height: calc(100% - 100px);
+    display: none;
+    position: absolute;
+    top: 100px;
+    background-color: #dfe6e9;
+}
+
+
+.question {
+    font-size: 35px;
+    color: #2d3436;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    text-align: center;
+    font-family: 'Montserrat', sans-serif;
+    width: 80%;
+    left: 10%;
+}
+
+#userContainer {
+    position: absolute;
+    height: 100px;
+    right: 0px;
+}
+
+
+.answer
+{
+	font-family: 'Montserrat', sans-serif;
+	text-align: center;
+	font-size: 30px;
+	color:#2d3436;
+}
+
+.answer1 {    
+    margin-top: 150px;
+}
+.answer2, .answer3 {
+    margin-top: 10px;
+}
+
+
+#clientContainer {
+    width: 90%;
+    position: absolute;
+    height: 300px;
+    z-index: 99;
+    top: 200px;
+    left: 5%;
+    background-color:white;
+    border-radius:20px;
+}
+#desktop {
+    position: absolute;
+    left: 5%;
+    /* width: 40%; */
+    /* height: 150px; */
+    text-align: center;
+    background-color: red;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 40px;
+    border-radius: 80px;
+}
+#player {
+    position: absolute;
+    right: 5%;
+    /* width: 40%; */
+    /* height: 150px; */
+    text-align: center;
+    background-color: blue;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 40px;
+    border-radius: 80px;
+}
+
+.green
+{
+	background-color:green;
+}
+
+.white
+{
+	background-color:white;
+}
+
+input#userName {
+    width: 100%;
+    position: absolute;
+    bottom: 0px;
+    /* overflow: hidden; */
+    text-align: center;
+    z-index: 1;
+    font-size: 37px;
+    display: none;
+}

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="style.css">
+
+	
+</head>
+<body>
+	<div id="header">
+		<div id="computerIcon"></div>
+		<div id="userContainer">
+			<div class="userIcon"></div>
+		</div>
+	</div>
+	<div id="clientContainer">
+		<div id="desktop">desktop</div>
+		<div id="player">player</div>
+	</div>
+	<div id="introContainer">
+		<div id="introPlay">play game.</div>
+	</div>
+	<div id="gameContainer">
+		<div class="question">question for users?</div>
+	</div>
+	<div id="answerContainer">
+		<div class="answer answer1">answer 1?</div>
+		<div class="answer answer2">answer 2?</div>
+		<div class="answer answer3">answer 3?</div>
+	</div>
+
+	<input type="text" id="userName" placeholder="User Name..."/>
+	<script src="http://192.168.0.84:3000/socket.io/socket.io.js"></script>
+
+	<!--<script type="text/javascript" src='logic.js'></script>-->
+
+	<script type="text/javascript">
+
+		var app = app || {};
+		app.dom = {};
+		var connectedUsers = 0;
+		var numberOfAnswers = 0;
+		var questionList;
+		var questionCount = 0;
+		var answered = false;
+
+var connectionOptions =  {
+       "force new connection" : true,
+       "reconnectionAttempts": "Infinity", //avoid having user reconnect manually in order to prevent dead clients after a server restart
+       "timeout" : 10000, //before connect_error and connect_timeout are emitted.
+       "transports" : ["websocket"]
+};
+
+var socket = io('http://192.168.0.84:3000', connectionOptions);
+
+function init(){
+	console.log(socket);
+	setupDOM();
+	addEvents();
+}
+
+		const setupDOM = () => {
+			app.dom.playGameBtn 	= document.getElementById('introPlay');
+			app.dom.introContainer 	= document.getElementById('introContainer');
+			app.dom.userContainer   = document.getElementById('userContainer');
+			app.dom.answerContainer = document.getElementById('answerContainer');
+			app.dom.answer1 		= document.querySelector('.answer1');
+			app.dom.answer2 		= document.querySelector('.answer2');
+			app.dom.answer3 		= document.querySelector('.answer3');
+			app.dom.clientContainer = document.getElementById('clientContainer');
+			app.dom.desktopClient   = document.getElementById('desktop');
+			app.dom.playerClient    = document.getElementById('player');
+		}
+
+		const mobileUser = () => {
+			document.getElementById('userName').style.display = 'block';
+			app.dom.introContainer.style.display = "none";
+			app.dom.clientContainer.style.display = "none";
+			app.dom.answerContainer.style.display = "block";
+		}
+
+		const addEvents = () => {
+			app.dom.playGameBtn.addEventListener('click', function(){
+				app.dom.introContainer.style.transform = "translateY(-100%)";
+				socket.emit('play game', "one");
+			});
+
+			app.dom.answer1.addEventListener('click', function(){
+				answer('answer1');
+			});
+
+			app.dom.answer2.addEventListener('click', function(){
+				answer('answer2');
+			})
+
+			app.dom.answer3.addEventListener('click', function(){
+				answer('answer3');
+			})
+
+			app.dom.playerClient.addEventListener('click', function(){
+				mobileUser();
+			})
+			app.dom.desktopClient.addEventListener('click', function(){
+				app.dom.clientContainer.style.display = "none";
+				document.getElementById('userName').style.display = "none";
+			})
+		}
+
+		const answer = (answer) => {
+			if(answered == false)
+			{
+			console.log('answer: ' + answer);
+			console.log(socket.io.engine.id); 
+			var socketString = socket.io.engine.id.toString();
+			var answerObject = {
+				"user" : socketString,
+				"answer" : answer
+			}
+			socket.emit('answer', socketString, answer);
+			answered = true;
+			}
+			else
+			{
+				console.log('already answered');
+			}
+		}
+
+		const addUser = (userArray) => {
+			document.getElementById('userContainer').innerHTML = "";
+			for(var i = 0; i < userArray.length; i++)
+			{
+				var newUser = document.createElement('div');
+				newUser.setAttribute('class', 'userIcon ' + userArray[i]);
+				newUser.setAttribute('id', userArray[i]);
+				document.getElementById('userContainer').appendChild(newUser);
+			}
+		}
+
+		//getQuestions(showQuestions);
+
+		function showQuestions(data)
+		{
+			console.log(data.results);
+			questionList = data.results;
+		}
+
+
+		
+		socket.on('user connected', function(userArray){
+			console.log('user connected: ' + userArray);
+			connectedUsers = userArray.length;
+			addUser(userArray);
+		})
+
+			socket.on('user disconnected', function(userArray){
+		    console.log('User disconnect... ');
+		    connectedUsers = userArray.length;
+		    addUser(userArray);
+		});
+
+
+		socket.on('sync', function(userArray){
+				console.log('number of users: ' + userArray.length)
+				addUser(userArray);
+				finalIndex = userArray.length - 1;
+				document.getElementById('userName').value = userArray[finalIndex];
+		});
+
+		socket.on('next question', function(userSocket){
+			console.log('new question');
+			for(var i = 0; i < document.querySelectorAll('.userIcon').length; i++)
+			{
+				document.querySelectorAll('.userIcon')[i].classList.remove("green");
+			}
+			questionCount++;
+			console.log("question coubnt: " + questionCount);
+			nextQuestion();
+		});
+
+		socket.on('question list', function(questions){
+			questionList = questions.results;
+			console.log(questionList)
+			nextQuestion();
+		});
+
+		function nextQuestion()
+		{
+			answered = false;
+			document.querySelector('.answer1').innerHTML = questionList[questionCount].correct_answer;
+			document.querySelector('.answer2').innerHTML = questionList[questionCount].incorrect_answers[1];
+			document.querySelector('.answer3').innerHTML = questionList[questionCount].incorrect_answers[2];
+			document.querySelector('.question').innerHTML = questionList[questionCount].question;
+		}
+
+		socket.on('new user answer', function(userSocket, nextQuestion){
+			document.getElementById(userSocket).classList.add("green");
+		});
+
+		init();
+
+
+
+
+
+
+	</script>
+</body>
+
+
+
+</html>
